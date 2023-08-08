@@ -3,11 +3,8 @@
 
 pthread_mutex_t mutex;
 
-int main(int argc, char* argv[])
+int main()
 {
-    
     run_reader_thread();
     return 0;
-
-
 }
