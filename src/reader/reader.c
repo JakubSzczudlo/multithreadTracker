@@ -3,36 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#define STATS_ARRAY_SIZE 11
-typedef union
-{
-    struct
-    {
-    uint64_t cpu_id;
-    uint64_t user;
-    uint64_t nice;
-    uint64_t system;
-    uint64_t idle;
-    uint64_t iowait;
-    uint64_t irq;
-    uint64_t softirq;
-    uint64_t steal;
-    uint64_t guest;
-    uint64_t guest_nice;
-    };
-    uint64_t stats_array[STATS_ARRAY_SIZE];
-}cpu_stats_t; 
-
-typedef struct
-{
-    cpu_stats_t cpu_stats;
-    uint8_t cpu_id;
-}cpu_info_t;
+#include "reader.h"
+#include "queue.h"
 
 static FILE* open_file(const char* file_path);
 static void close_file(FILE* fp);
 static void skip_first_line_in_file(FILE* fp);
+
+extern circ_bbuf_info_t circular_buffer_reader_analyzer;
 
 
 static FILE* open_file(const char* file_path)
@@ -64,7 +42,7 @@ void read_cpu_stats(char* line, cpu_info_t* const cpu_statistics)
 
         int cpuNumber;
         sscanf(token, "cpu%d ", &cpuNumber);
-        cpu_statistics->cpu_stats.cpu_id = (uint8_t)cpuNumber;
+        cpu_statistics->cpu_id = (uint16_t)cpuNumber;
         token = strtok_r(0, " ", &token_end); // get rid of "cpu" on beggining
 
         for(uint8_t i = 0; i < STATS_ARRAY_SIZE; i++)
@@ -84,7 +62,9 @@ void put_stats_in_queue(void)
     while (fgets(line, sizeof(line), file) != NULL)
     {
         read_cpu_stats(line, &cpu_stats);
-        //put in queue
+        if (circ_bbuf_push_info(&circular_buffer_analyzer_printer, cpu_stats)) {
+            exit(EXIT_FAILURE);
+        }
     }
     close_file(file);
 }

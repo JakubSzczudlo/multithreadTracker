@@ -5,11 +5,18 @@ static void* reader_thread(void* pArg)
 {
     (void) pArg;
 
+    while (1)
+    {
+        
+    }
+    
+
+
     return 0;
 }
 
 
-void run_reader_thread(void)
+void run_reader_thread()
 {
     pthread_t thread_id = 0U;
     pthread_attr_t threadAttr;

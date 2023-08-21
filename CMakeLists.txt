@@ -4,10 +4,9 @@ project(multi_thread_tracker)
 include_directories("inc"
 "src/os"
 "src/analyzer"
-"src/logger"
+"src/queue"
 "src/printer"
 "src/reader"
-"src/watchdog"
 )
 set(CMAKE_C_STANDARD 99)
 
