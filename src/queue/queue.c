@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "analyzer.h"
 #include "queue.h"
-#define MAX_BUFFER_SIZE 100
+#define MAX_BUFFER_SIZE 300
 
 static cpu_info_t queue_stats_analyzer[MAX_BUFFER_SIZE];
 static cpu_info_t queue_stats_printer[MAX_BUFFER_SIZE];

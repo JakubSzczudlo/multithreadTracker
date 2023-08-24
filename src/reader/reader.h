@@ -1,5 +1,6 @@
 #ifndef READER_H
 #define READER_H
+
 #include <stdint.h>
 #define STATS_ARRAY_SIZE 10
 

@@ -3,15 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "reader.h"
 #include "queue.h"
 
 static FILE* open_file(const char* file_path);
 static void close_file(FILE* fp);
 static void skip_first_line_in_file(FILE* fp);
+static void read_cpu_stats(char* line, cpu_info_t* const cpu_statistics);
 
 extern circ_bbuf_info_t circular_buffer_reader_analyzer;
-
+extern pthread_mutex_t mutex_reader_analyzer;
 
 static FILE* open_file(const char* file_path)
 {
@@ -34,7 +36,7 @@ static void close_file(FILE* fp)
     fclose(fp);
 }
 
-void read_cpu_stats(char* line, cpu_info_t* const cpu_statistics)
+static void read_cpu_stats(char* line, cpu_info_t* const cpu_statistics)
 {
     char* token_end = 0;
     if (strncmp(line, "cpu", 3) == 0) 
@@ -67,9 +69,11 @@ void put_stats_in_queue(void)
             break;
         }
         read_cpu_stats(line, &cpu_stats);
+        pthread_mutex_lock(&mutex_reader_analyzer);
         if (circ_bbuf_push_info(&circular_buffer_reader_analyzer, cpu_stats) == -1) {
             continue;
         }
+        pthread_mutex_unlock(&mutex_reader_analyzer);
     }
     close_file(file);
 }
