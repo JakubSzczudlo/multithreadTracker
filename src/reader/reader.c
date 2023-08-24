@@ -16,7 +16,8 @@ extern circ_bbuf_info_t circular_buffer_reader_analyzer;
 static FILE* open_file(const char* file_path)
 {
     FILE* fp = fopen(file_path, "r");
-    if (fp == 0) {
+    if (fp == 0) 
+    {
         perror("Error opening");
         exit(EXIT_FAILURE);
     }
@@ -59,11 +60,15 @@ void put_stats_in_queue(void)
     skip_first_line_in_file(file);
     cpu_info_t cpu_stats = {0};
     char line[256];
-    while (fgets(line, sizeof(line), file) != NULL)
+    while ((fgets(line, sizeof(line), file) != 0) )
     {
+        if((strncmp(line, "cpu", 3) != 0))
+        {
+            break;
+        }
         read_cpu_stats(line, &cpu_stats);
-        if (circ_bbuf_push_info(&circular_buffer_analyzer_printer, cpu_stats)) {
-            exit(EXIT_FAILURE);
+        if (circ_bbuf_push_info(&circular_buffer_reader_analyzer, cpu_stats) == -1) {
+            continue;
         }
     }
     close_file(file);

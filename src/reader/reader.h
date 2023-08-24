@@ -1,7 +1,7 @@
 #ifndef READER_H
 #define READER_H
 #include <stdint.h>
-#define STATS_ARRAY_SIZE 11
+#define STATS_ARRAY_SIZE 10
 
 typedef union
 {
@@ -28,6 +28,7 @@ typedef struct
     cpu_stats_t cpu_stats;
 }cpu_info_t;
 
+void put_stats_in_queue(void);
 void run_reader_thread(void);
 
 #endif // READER_H

@@ -2,11 +2,17 @@
 #define ANALYZER_H
 
 #include <stdint.h>
+#include "reader.h"
 
 typedef struct
 {
     double cpu_usage;
     uint8_t cpu_id;
 }cpu_usage_t;
+
+void calculate_cpu_usage(cpu_info_t* cpu_statistics);
+void read_stats_and_put_result_in_queue(void);
+void init_cores_table(void);
+void free_cores_table(void);
 
 #endif // ANALYZER_H
